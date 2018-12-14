@@ -6,6 +6,9 @@ class Worker(object):
         export = getattr(exporter, method_name)
         return export(self)
 
+    def do_work(self):
+        pass
+
 
 class Developer(Worker):
 
@@ -13,6 +16,9 @@ class Developer(Worker):
 
     def __init__(self):
         self.work_experience = 1
+
+    def do_work(self):
+        real work
 
 
 class Tester(Worker):
@@ -32,6 +38,7 @@ class XMLExporter(DataExporter):
 
     def export_data_of_developer(self, developer):
         print('create xml file with info about developer')
+        developer.do_work
 
     def export_data_of_tester(self, tester):
         print('create xml file with info about tester %d', tester.specific_data_for_developer)
