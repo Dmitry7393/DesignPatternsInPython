@@ -1,46 +1,57 @@
-import abc
+import re
 
 
-class Handler(metaclass=abc.ABCMeta):
-    """an interface for handling requests"""
+class EmailHandler(object):
+    """an interface for handling mails"""
 
     def __init__(self, successor=None):
         self._successor = successor
 
-    @abc.abstractmethod
-    def handle_request(self):
+    def handle_mail(self, subject, mail):
         print('HANDLE_REQUEST IN BASE CLASS ')
         pass
 
 
-class ConcreteHandler1(Handler):
-    """Handle request, otherwise forward it to the successor."""
+class SpamHandler(EmailHandler):
+    """Handle spam, otherwise forward it to the successor."""
 
-    def handle_request(self):
-        print("ConcreteHandler1 handle_request")
-        if True:  # if can_handle:
-            print('handle')
-            pass
+    def handle_mail(self, subject, mail):
+        print("SpamHandler handle_mail")
+        if re.search('buy', subject, re.IGNORECASE):
+            print('move mail to spam folder')
         elif self._successor is not None:
-            self._successor.handle_request()
+            print("pass to other handler")
+            self._successor.handle_mail(subject, mail)
 
 
-class ConcreteHandler2(Handler):
-    """Handle request, otherwise forward it to the successor."""
+class ForumHandler(EmailHandler):
+    """Handles emails from forum"""
 
-    def handle_request(self):
-        print("ConcreteHandler2 handle_request")
-        if False:  # if can_handle:
-            pass
+    def handle_mail(self, subject, mail):
+        if re.search('forum', subject, re.IGNORECASE):
+            print('move mail to forum folder')
         elif self._successor is not None:
-            print('pass to successor')
-            self._successor.handle_request()
+            print("pass to other handler")
+            self._successor.handle_mail(subject, mail)
+
+
+class CustomerHandler(EmailHandler):
+    """Handles emails from customers"""
+
+    def handle_mail(self, subject, mail):
+        if re.search('customer', subject, re.IGNORECASE):
+            print('CustomersHandler handle_mail')
+        elif self._successor is not None:
+            print("pass to other handler")
+            self._successor.handle_mail(subject, mail)
 
 
 def main():
-    concrete_handler_1 = ConcreteHandler1()
-    concrete_handler_2 = ConcreteHandler2(concrete_handler_1) # concrete_handler_1 is successor of concrete_handler_2
-    concrete_handler_2.handle_request()
+    forum_handler = ForumHandler()
+    spam_handler = SpamHandler(forum_handler)
+    customer_handler = CustomerHandler(spam_handler)
+
+    customer_handler.handle_mail('Problem on production server', 'Customer has issue with...')
 
 
 if __name__ == "__main__":

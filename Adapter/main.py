@@ -1,92 +1,83 @@
-# Adaptee (source) interface
-class EuropeanSocketInterface:
-    def voltage(self):
+
+
+class MediaPlayer(object):
+
+    def __init__(self):
         pass
 
-    def live(self):
-        pass
-
-    def neutral(self):
-        pass
-
-    def earth(self):
+    def play(self, audio_type, file_name):
         pass
 
 
-class Socket(EuropeanSocketInterface):
-    def voltage(self):
-        return 230
+class AdvancedMediaPlayer(object):
 
-    def live(self):
-        return 1
+    def play_vlc(self, file_name):
+        pass
 
-    def neutral(self):
-        return -1
-
-    def earth(self):
-        return 0
+    def play_mp4(self, file_name):
+        pass
 
 
-# Target interface
-class USASocketInterface:
-    def voltage(self): pass
+class VlcPlayer(AdvancedMediaPlayer):
 
-    def live(self): pass
+    def play_vlc(self, file_name):
+        print('Playing vlc file', file_name)
 
-    def neutral(self): pass
-
-
-# The Adapter
-class Adapter(USASocketInterface):
-    __socket = None
-
-    def __init__(self, socket):
-        self.__socket = socket
-
-    def voltage(self):
-        return 110
-
-    def live(self):
-        return self.__socket.live()
-
-    def neutral(self):
-        return self.__socket.neutral()
+    def play_mp4(self, file_name):
+        pass
 
 
-# Client
-class ElectricKettle:
-    __power = None
+class Mp4Player(AdvancedMediaPlayer):
 
-    def __init__(self, power):
-        self.__power = power
+    def play_mp4(self, file_name):
+        print('Playing mp4 file', file_name)
 
-    def boil(self):
-        if self.__power.voltage() > 110:
-            print("Kettle on fire!")
-        else:
-            if self.__power.live() == 1 and \
-                    self.__power.neutral() == -1:
-                print("Coffee time!")
+    def play_vlc(self, file_name):
+        pass
 
-            else:
-                print("No power.")
 
+class MediaAdapter(MediaPlayer):
+
+    def __init__(self, audio_type):
+        MediaPlayer.__init__(self)
+
+        if audio_type == 'vlc':
+            self.advanced_media_player = VlcPlayer()
+        if audio_type == 'mp4':
+            self.advanced_media_player = Mp4Player()
+
+    def play(self, audio_type, file_name):
+        if audio_type == 'vlc':
+            self.advanced_media_player.play_vlc(file_name)
+        elif audio_type == 'mp4':
+            self.advanced_media_player.play_mp4(file_name)
+
+
+class AudioPlayer(MediaPlayer):
+
+    def __init__(self):
+        self.media_adapter = None
+
+    def play(self, audio_type, file_name):
+
+        if audio_type == 'mp3':
+            print('Playing mp3 file', file_name)
+        elif audio_type == 'mp4':
+            self.media_adapter = MediaAdapter(audio_type)
+            self.media_adapter.play(audio_type, file_name)
+        elif audio_type == 'vlc':
+            self.media_adapter = MediaAdapter(audio_type)
+            self.media_adapter.play(audio_type, file_name)
 
 
 def main():
-    # Plug in
-    socket = Socket()
-    adapter = Adapter(socket)
-    kettle = ElectricKettle(socket) # adapter
+    audio_player = AudioPlayer()
 
-    # Make coffee
-    kettle.boil()
-
+    audio_player.play('mp3', 'test1.mp3')
+    audio_player.play('mp4', 'test2.mp4')
+    audio_player.play('vlc', 'test3.vlc')
     return 0
 
 
 if __name__ == "__main__":
     main()
-
-
-# Adapter(my_client_object)

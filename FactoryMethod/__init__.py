@@ -1,54 +1,52 @@
 import abc
+import sqlite3
+#import mysql.connector
 
-
-class TableFactory(metaclass=abc.ABCMeta):
+class Database(metaclass=abc.ABCMeta):
 
     def __init__(self):
-        self.product = self._factory_method()
+        pass
 
     @abc.abstractmethod
-    def _factory_method(self):
+    def create_database(self):
         pass
 
-    def some_operation(self):
-        self.product.interface()
+
+class MySqlDatabase(Database):
+
+    def create_database(self):
+        print('create MySqlTable')
 
 
-class MySqlTableFactory(TableFactory):
+class SqlLite3Database(Database):
 
-    def _factory_method(self):
-        return MySqlTable()
-
-
-class OracleTableFactory(TableFactory):
-
-    def _factory_method(self):
-        return OracleTable()
+    def create_database(self):
+        print('create SqlLiteTable')
 
 
-class DbTable(metaclass=abc.ABCMeta):
+class DatabaseFactory(metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
-    def interface(self):
+    def create_database(self):
         pass
 
 
-class MySqlTable(DbTable):
+class MySqlDbFactory(DatabaseFactory):
 
-    def interface(self):
-        pass
+    def create_database(self):
+        print('return MySqlDatabase')
+        return MySqlDatabase()
 
 
-class OracleTable(DbTable):
+class SqlLite3Factory(DatabaseFactory):
 
-    def interface(self):
-        pass
-
+    def create_database(self):
+        print('return SqlLite3 database')
+        return SqlLite3Database()
 
 def main():
-    mysql_table_factory = MySqlTableFactory()
-    mysql_table_factory.product.interface()
-    mysql_table_factory.some_operation()
+    mysql_db_factrory = MySqlDbFactory()
+    mysql_db_factrory.create_database()
 
 
 if __name__ == "__main__":
