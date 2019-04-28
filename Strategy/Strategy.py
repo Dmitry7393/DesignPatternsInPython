@@ -1,42 +1,44 @@
 import abc
 
-
-class Context:
-    """
-    Define the interface of interest to clients.
-    Maintain a reference to a Strategy object.
-    """
-
-    def __init__(self, strategy):
-        self._strategy = strategy
-
-    def context_interface(self):
-        self._strategy.algorithm_interface()
-
-
-class Strategy(metaclass=abc.ABCMeta):
+class Compression(metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
-    def algorithm_interface(self):
+    def compress_file(self, path):
         pass
 
 
-class ConcreteStrategyA(Strategy):
+class ZIPCompression(Compression):
 
-    def algorithm_interface(self):
-        print("ConcreteStrategyA : real function")
+    def compress_file(self, path):
+        print('create zip archive with file: ', path)
 
 
-class ConcreteStrategyB(Strategy):
+class RARCompression(Compression):
 
-    def algorithm_interface(self):
-        print("ConcreteStrategyB : real function")
+    def compress_file(self, path):
+        print('create rar archive with file: ', path)
+
+
+class ARJCompression(Compression):
+
+    def compress_file(self, path):
+        print('create arj archive with file: ', path)
+
+
+class Compressor:
+
+    def __init__(self, compression):
+        self._compression = compression
+
+    def compress_file(self, path):
+        self._compression.compress_file(path)
 
 
 def main():
-    concrete_strategy_a = ConcreteStrategyA()
-    context = Context(concrete_strategy_a)
-    context.context_interface()
+    path_to_file = 'test_compress.txt'
+    compression = ZIPCompression()
+    compressor = Compressor(compression)
+    compressor.compress_file(path_to_file)
 
 
 if __name__ == "__main__":

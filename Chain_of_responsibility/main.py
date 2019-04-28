@@ -5,6 +5,7 @@ class EmailHandler(object):
     """an interface for handling mails"""
 
     def __init__(self, successor=None):
+        print("EmailHandler - set _successor ", type(successor))
         self._successor = successor
 
     def handle_mail(self, subject, mail):
@@ -14,6 +15,10 @@ class EmailHandler(object):
 
 class SpamHandler(EmailHandler):
     """Handle spam, otherwise forward it to the successor."""
+
+    def __init__(self, successor):
+        print("SpamHandler :: __init__ ")
+        super().__init__(successor)
 
     def handle_mail(self, subject, mail):
         print("SpamHandler handle_mail")
@@ -27,6 +32,10 @@ class SpamHandler(EmailHandler):
 class ForumHandler(EmailHandler):
     """Handles emails from forum"""
 
+    def __init__(self):
+        print("ForumHandler :: __init__ ")
+        super().__init__()
+
     def handle_mail(self, subject, mail):
         if re.search('forum', subject, re.IGNORECASE):
             print('move mail to forum folder')
@@ -37,6 +46,10 @@ class ForumHandler(EmailHandler):
 
 class CustomerHandler(EmailHandler):
     """Handles emails from customers"""
+
+    def __init__(self, successor):
+        print("CustomerHandler :: __init__ ")
+        super().__init__(successor)
 
     def handle_mail(self, subject, mail):
         if re.search('customer', subject, re.IGNORECASE):
